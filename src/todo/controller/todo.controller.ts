@@ -8,11 +8,13 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Redirect,
 } from '@nestjs/common';
 import { MyDecoratorMeta } from 'src/config/metadata.decorator';
 import { MyDecorator } from 'src/config/my.decorator';
 import { CreateTodoDTO, CreateTodoResponseDTO } from '../dto/create-todo.dto';
+import { UpdateTodoDTO } from '../dto/update-todo.dto';
 import { Todo } from '../entity/todo.entity';
 import { TodoNotFoundException } from '../exception/todoNotFund.exception';
 import { IController } from '../interface/controller.interface';
@@ -40,12 +42,19 @@ export class TodoController implements IController<Todo> {
   }
 
   @Delete(':id')
-  async remove(id: string): Promise<any> {
+  async remove(id: string) {
     throw new Error('Method not implemented.');
   }
 
-  async update(id: string, dto: any): Promise<any> {
-    throw new Error('Method not implemented.');
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateTodoDTO,
+  ): Promise<Todo> {
+    const todoOne = await this.todoService.findOne(id);
+    if (!todoOne) throw new TodoNotFoundException(id);
+
+    return await this.todoService.update(id, dto);
   }
 
   @Get()
