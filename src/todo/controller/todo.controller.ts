@@ -29,11 +29,9 @@ export class TodoController implements IController<Todo> {
 
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Todo> {
-    try {
-      return await this.todoService.findOne(id);
-    } catch (err) {
-      throw new TodoNotFoundException(id);
-    }
+    const todo = await this.todoService.findOne(id);
+    if (!todo) throw new TodoNotFoundException(id);
+    return todo;
   }
 
   @Get()
