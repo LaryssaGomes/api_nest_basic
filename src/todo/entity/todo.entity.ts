@@ -5,13 +5,10 @@ import {
   Generated,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { BaseEntity } from '../interface/base/base-entity';
 
 @Entity({ name: 'todos' }) // Definindo nome da tabela
-export class Todo {
-  @PrimaryGeneratedColumn('uuid')
-  @Generated('uuid')
-  id: string;
-
+export class Todo extends BaseEntity {
   @Column({ nullable: false }) // Não pode ser nulo
   name: string;
 
@@ -20,7 +17,4 @@ export class Todo {
 
   @Column({ nullable: false, default: false }) // Definindo valor padrão
   is_done: boolean;
-
-  @CreateDateColumn({ nullable: false, name: 'created_at' })
-  created_at: string;
 }
