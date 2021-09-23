@@ -1,5 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import { Todo } from '../entity/todo.entity';
+import { Todo } from '../entities/todo.entity';
 import { DefaultResponseDTO } from './default-response.dto';
 
 export class CreateTodoDTO {

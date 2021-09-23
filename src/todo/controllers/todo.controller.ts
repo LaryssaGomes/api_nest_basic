@@ -13,12 +13,13 @@ import {
 } from '@nestjs/common';
 import { MyDecoratorMeta } from 'src/config/metadata.decorator';
 import { MyDecorator } from 'src/config/my.decorator';
-import { CreateTodoDTO, CreateTodoResponseDTO } from '../dto/create-todo.dto';
-import { UpdateTodoDTO } from '../dto/update-todo.dto';
-import { Todo } from '../entity/todo.entity';
-import { TodoNotFoundException } from '../exception/todoNotFund.exception';
-import { IController } from '../interface/controller.interface';
-import { TodoService } from '../service/todo.service';
+import { IController } from 'src/shared/controller.interface';
+import { CreateTodoDTO, CreateTodoResponseDTO } from '../dtos/create-todo.dto';
+import { UpdateTodoDTO } from '../dtos/update-todo.dto';
+import { Todo } from '../entities/todo.entity';
+import { TodoNotFoundException } from '../exceptions/todoNotFund.exception';
+
+import { TodoService } from '../services/todo.service';
 
 @Controller('todo')
 export class TodoController implements IController<Todo> {
@@ -31,9 +32,7 @@ export class TodoController implements IController<Todo> {
 
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Todo> {
-    const todo = await this.todoService.findOne(id);
-    if (!todo) throw new TodoNotFoundException(id);
-    return todo;
+    return await this.todoService.findOne(id);
   }
 
   @Get()
@@ -43,7 +42,7 @@ export class TodoController implements IController<Todo> {
 
   @Delete(':id')
   async remove(id: string) {
-    throw new Error('Method not implemented.');
+    return this.todoService.remove(id);
   }
 
   @Put(':id')
@@ -51,9 +50,7 @@ export class TodoController implements IController<Todo> {
     @Param('id') id: string,
     @Body() dto: UpdateTodoDTO,
   ): Promise<Todo> {
-    const todoOne = await this.todoService.findOne(id);
-    if (!todoOne) throw new TodoNotFoundException(id);
-
+    await this.todoService.findOne(id);
     return await this.todoService.update(id, dto);
   }
 

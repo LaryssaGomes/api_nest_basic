@@ -1,11 +1,5 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Generated,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { BaseEntity } from '../interface/base/base-entity';
+import { BaseEntity } from 'src/shared/base-entity';
+import { Column, Entity } from 'typeorm';
 
 @Entity({ name: 'todos' }) // Definindo nome da tabela
 export class Todo extends BaseEntity {

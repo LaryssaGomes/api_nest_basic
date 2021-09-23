@@ -1,4 +1,4 @@
-import { BaseEntity } from './base/base-entity';
+import { BaseEntity } from './base-entity';
 
 export interface IController<TEntity extends BaseEntity> {
   add(dto: any): Promise<TEntity>;
