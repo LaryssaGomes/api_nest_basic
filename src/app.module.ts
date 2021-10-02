@@ -12,8 +12,6 @@ import configuration from './config';
 
 @Module({
   imports: [
-    TodoModule,
-    UsersModule,
     ConfigModule.forRoot({
       // load que faz o carregamento
       load: [configuration],
@@ -25,15 +23,11 @@ import configuration from './config';
         configService.get('bankOptions'),
       inject: [ConfigService],
     }),
+    TodoModule,
+    UsersModule,
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: Secured,
-    },
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

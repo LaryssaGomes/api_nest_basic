@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   Redirect,
+  UseGuards,
 } from '@nestjs/common';
 import { MyDecoratorMeta } from 'src/config/metadata.decorator';
 import { MyDecorator } from 'src/config/my.decorator';
@@ -18,14 +19,18 @@ import { CreateTodoDTO, CreateTodoResponseDTO } from '../dtos/create-todo.dto';
 import { UpdateTodoDTO } from '../dtos/update-todo.dto';
 import { Todo } from '../entities/todo.entity';
 import { TodoNotFoundException } from '../exceptions/todoNotFund.exception';
+import { Injectable } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 import { TodoService } from '../services/todo.service';
+import JwtAuthenticationGuard from 'src/auth/jwt-authentication.guard';
 
 @Controller('todo')
 export class TodoController implements IController<Todo> {
   constructor(private readonly todoService: TodoService) {}
 
   @Post()
+  @UseGuards(JwtAuthenticationGuard)
   async add(@Body() todo: CreateTodoDTO): Promise<Todo> {
     return await this.todoService.create(todo);
   }

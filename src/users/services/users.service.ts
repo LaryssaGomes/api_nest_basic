@@ -1,14 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import RegisterDto from 'src/auth/dtos/register.dto';
 import { Repository } from 'typeorm';
 import CreateUserDto from '../dtos/create-user.dto';
 import User from '../entities/user.entity';
 
 @Injectable()
 export class UsersService {
+  [x: string]: any;
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private readonly usersRepository: Repository<User>,
   ) {}
 
   async getByEmail(email: string) {
@@ -22,9 +24,24 @@ export class UsersService {
     );
   }
 
-  async create(userData: CreateUserDto) {
+  async create(userData: RegisterDto) {
     const newUser = await this.usersRepository.create(userData);
     this.usersRepository.save(newUser);
     return newUser;
+  }
+
+  async getById(id: string) {
+    const user = await this.usersRepository.findOne({ id });
+    if (user) {
+      return user;
+    }
+    throw new HttpException(
+      'User with this email does not exist',
+      HttpStatus.NOT_FOUND,
+    );
+  }
+
+  async lista(): Promise<RegisterDto[]> {
+    return await this.usersRepository.find();
   }
 }

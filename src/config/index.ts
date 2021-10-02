@@ -9,6 +9,8 @@ export default () => ({
     password: process.env.DB_SERVER_PASSWORD,
     database: process.env.DATABASE,
     entities: [join(__dirname, '/../**/**.entity{.ts,.js}')],
+    JWT_SECRET: process.env.JWT__SECRET,
+    JWT_EXPIRATION_TIME: process.env.JWT_EXPIRATION_TIME,
     // entities: [UserSchema],
     // ! ALWAYS FALSE IN PROD
     autoLoadEntities: !(

@@ -1,11 +1,30 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { UsersService } from 'src/users/services/users.service';
 import RegisterDto from '../dtos/register.dto';
 import * as bcrypt from 'bcrypt';
 import { PostgresErrorCode } from 'src/config/postgresErrorCodes.enum';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    @Inject(forwardRef(() => UsersService))
+    private usersService: UsersService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+  ) {}
+
+  public getCookieWithJwtToken(userId: string) {
+    const payload: TokenPayload = { userId };
+    const token = this.jwtService.sign(payload);
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get(
+      'JWT_EXPIRATION_TIME',
+    )}`;
+  }
+
+  public async lista(): Promise<RegisterDto[]> {
+    return await this.usersService.lista();
+  }
 
   public async register(registrationData: RegisterDto) {
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
@@ -16,7 +35,6 @@ export class AuthService {
         ...registrationData,
       });
 
-      createdUser.password = undefined;
       return createdUser;
     } catch (error) {
       if (error?.code === PostgresErrorCode.UniqueViolation) {
@@ -31,6 +49,7 @@ export class AuthService {
       );
     }
   }
+
   public async getAuthenticatedUser(email: string, plainTextPassword: string) {
     try {
       const user = await this.usersService.getByEmail(email);
@@ -59,5 +78,9 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  public getCookieForLogOut() {
+    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
   }
 }
