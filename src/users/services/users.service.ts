@@ -1,20 +1,22 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import RegisterDto from 'src/auth/dtos/register.dto';
+import { RegisterDto } from 'src/auth/dtos/register.dto';
+
 import { Repository } from 'typeorm';
 import CreateUserDto from '../dtos/create-user.dto';
+
 import User from '../entities/user.entity';
+import { UserRepository } from '../repository/user.repository';
 
 @Injectable()
 export class UsersService {
-  [x: string]: any;
   constructor(
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    @InjectRepository(UserRepository)
+    private readonly userRepository,
   ) {}
 
   async getByEmail(email: string) {
-    const user = await this.usersRepository.findOne({ email });
+    const user = await this.userRepository.findOne({ email });
     if (user) {
       return user;
     }
@@ -24,14 +26,12 @@ export class UsersService {
     );
   }
 
-  async create(userData: RegisterDto) {
-    const newUser = await this.usersRepository.create(userData);
-    this.usersRepository.save(newUser);
-    return newUser;
+  async create(userData: CreateUserDto) {
+    return await this.userRepository.createUser(userData);
   }
 
   async getById(id: string) {
-    const user = await this.usersRepository.findOne({ id });
+    const user = await this.userRepository.findOneUser({ id });
     if (user) {
       return user;
     }
@@ -40,8 +40,17 @@ export class UsersService {
       HttpStatus.NOT_FOUND,
     );
   }
+  async findOne(email) {
+    const user = await this.userRepository.findOne({ email });
+    return user;
+  }
 
+  async findEmail(email: string) {
+    console.log('findEmail');
+    const user = await this.userRepository.findOne({ email });
+    return user;
+  }
   async lista(): Promise<RegisterDto[]> {
-    return await this.usersRepository.find();
+    return await this.userRepository.find();
   }
 }

@@ -7,20 +7,26 @@ import {
   UseGuards,
   Get,
   Res,
+  Optional,
+  Inject,
 } from '@nestjs/common';
-import RegisterDto from '../dtos/register.dto';
+
 import { Request, Response } from 'express';
 import RequestWithUser from '../interfaces/request-user.interface';
 import { LocalAuthGuard } from '../localAuth.guard';
 import { AuthService } from '../services/auth.service';
 import JwtAuthenticationGuard from '../jwt-authentication.guard';
+import { RegisterDto } from '../dtos/register.dto';
+import CreateUserDto from 'src/users/dtos/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authenticationService: AuthService) {}
 
   @Post('register')
-  async register(@Body() registrationData: RegisterDto): Promise<RegisterDto> {
+  async register(
+    @Body() registrationData: CreateUserDto,
+  ): Promise<CreateUserDto> {
     return this.authenticationService.register(registrationData);
   }
 

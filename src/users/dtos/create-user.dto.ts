@@ -3,18 +3,14 @@ import {
   IsString,
   IsNotEmpty,
   MinLength,
-  Matches,
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-  ValidationArguments,
-  ValidationOptions,
-  registerDecorator,
+  Validator,
   Validate,
 } from 'class-validator';
+import { UserExists } from '../validadores/users.validadores';
 
-//https://ichi.pro/pt/nest-js-e-o-tubo-de-validacao-personalizado-38556743344192
 //https://ondwn.com/en/blog-20190519/
 export class CreateUserDto {
+  @Validate(UserExists)
   @IsEmail()
   email: string;
 

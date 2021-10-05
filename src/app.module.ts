@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Secured } from './config/Secured';
 import { TodoModule } from './todo/todo.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';

@@ -1,8 +1,14 @@
-import { IsEmail, IsString, IsNotEmpty, MinLength } from 'class-validator';
-import { UserExists } from 'src/users/validadores/users.validadores';
+import {
+  IsEmail,
+  IsString,
+  IsNotEmpty,
+  MinLength,
+  Validate,
+} from 'class-validator';
+import User from 'src/users/entities/user.entity';
+import { Unique } from 'typeorm';
 
 export class RegisterDto {
-  @UserExists()
   @IsEmail()
   email: string;
 
@@ -19,5 +25,3 @@ export class RegisterDto {
   @IsNotEmpty({ message: 'Campo obrigatório' })
   phoneNumber: string;
 }
-
-export default RegisterDto;

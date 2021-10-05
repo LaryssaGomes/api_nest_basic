@@ -1,10 +1,12 @@
 import { forwardRef, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { UsersService } from 'src/users/services/users.service';
-import RegisterDto from '../dtos/register.dto';
+
 import * as bcrypt from 'bcrypt';
 import { PostgresErrorCode } from 'src/config/postgresErrorCodes.enum';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { RegisterDto } from '../dtos/register.dto';
+import CreateUserDto from 'src/users/dtos/create-user.dto';
 
 export class AuthService {
   constructor(
@@ -26,7 +28,7 @@ export class AuthService {
     return await this.usersService.lista();
   }
 
-  public async register(registrationData: RegisterDto) {
+  public async register(registrationData: CreateUserDto) {
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
     registrationData.password = hashedPassword.toString();
 
