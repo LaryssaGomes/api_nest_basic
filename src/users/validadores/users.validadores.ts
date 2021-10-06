@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import {
   ValidationArguments,
   ValidatorConstraint,
@@ -9,19 +10,21 @@ import { UserRepository } from '../repository/user.repository';
 @ValidatorConstraint({ name: 'userName', async: true })
 @Injectable()
 export class UserExists implements ValidatorConstraintInterface {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    @InjectRepository(UserRepository)
+    private userRepository: UserRepository,
+  ) {}
 
-  async validate(email: string, arg: ValidationArguments) {
+  async validate(email: string) {
     try {
-      await this.userRepository.findOneEmail(email);
-    } catch (e) {
+      await this.userRepository.getOneOrFail(email);
       return false;
+    } catch (e) {
+      return true;
     }
-
-    return true;
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `User doesn't exist!`;
+    return `User doesn't exist`;
   }
 }

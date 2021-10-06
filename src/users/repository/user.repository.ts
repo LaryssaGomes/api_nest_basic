@@ -5,8 +5,10 @@ import User from '../entities/user.entity';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
+  getOneOrFail(email: string) {
+    return this.findOne({ email });
+  }
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    console.log('Creating');
     const newUser = await this.create(createUserDto);
     try {
       this.save(newUser);
