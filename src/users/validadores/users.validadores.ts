@@ -17,7 +17,8 @@ export class UserExists implements ValidatorConstraintInterface {
 
   async validate(email: string) {
     try {
-      await this.userRepository.getOneOrFail(email);
+      const user = await this.userRepository.getOneOrFail(email);
+      console.log(user.name);
       return false;
     } catch (e) {
       return true;
@@ -25,6 +26,6 @@ export class UserExists implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `User doesn't exist`;
+    return `Usuario com esse email já existe`;
   }
 }

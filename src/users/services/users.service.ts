@@ -4,16 +4,34 @@ import { RegisterDto } from 'src/auth/dtos/register.dto';
 
 import { Repository } from 'typeorm';
 import CreateUserDto from '../dtos/create-user.dto';
-
-import User from '../entities/user.entity';
+import * as bcrypt from 'bcrypt';
 import { UserRepository } from '../repository/user.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserRepository)
-    private readonly userRepository,
+    private readonly userRepository: UserRepository,
   ) {}
+
+  async getUserIfRefreshTokenMatches(refreshToken: string, userId: string) {
+    const user = await this.getById(userId);
+
+    const isRefreshTokenMatching = await bcrypt.compare(
+      refreshToken,
+      user.currentHashedRefreshToken,
+    );
+
+    if (isRefreshTokenMatching) {
+      return user;
+    }
+  }
+
+  async removeRefreshToken(userId: string) {
+    return this.userRepository.update(userId, {
+      currentHashedRefreshToken: null,
+    });
+  }
 
   async getByEmail(email: string) {
     const user = await this.userRepository.findOne({ email });
@@ -31,7 +49,7 @@ export class UsersService {
   }
 
   async getById(id: string) {
-    const user = await this.userRepository.findOneUser({ id });
+    const user = await this.userRepository.findOneUser(id);
     if (user) {
       return user;
     }
@@ -40,6 +58,7 @@ export class UsersService {
       HttpStatus.NOT_FOUND,
     );
   }
+
   async findOne(email) {
     const user = await this.userRepository.findOne({ email });
     return user;
@@ -50,6 +69,7 @@ export class UsersService {
     const user = await this.userRepository.findOne({ email });
     return user;
   }
+
   async lista(): Promise<RegisterDto[]> {
     return await this.userRepository.find();
   }

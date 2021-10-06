@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { BaseEntity } from 'src/shared/base-entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -14,6 +15,12 @@ class User extends BaseEntity {
 
   @Column()
   phoneNumber: string;
+
+  @Column({
+    nullable: true,
+  })
+  @Exclude()
+  public currentHashedRefreshToken?: string;
 }
 
 export default User;
